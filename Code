@@ -1,0 +1,72 @@
+import pandas as pd
+import numpy as np
+from scipy.stats import pearsonr
+import matplotlib.pyplot as plt
+
+# Load the separate files
+nupl_data = pd.read_csv('bitcoin-nupl.csv')  # NUPL file
+sopr_data = pd.read_csv('bitcoin-sopr-spent-outpu.csv')  # SOPR file
+
+# Check the columns
+print("Columns in bitcoin-nupl.csv:", nupl_data.columns)
+print("Columns in bitcoin-sopr-spent-outpu.csv:", sopr_data.columns)
+
+# Ensure the columns are properly formatted
+nupl_data['DateTime'] = pd.to_datetime(nupl_data['DateTime'])  # Convert to datetime
+sopr_data['DateTime'] = pd.to_datetime(sopr_data['DateTime'])  # Convert to datetime
+
+# Merge the data on the 'DateTime' column
+data = pd.merge(nupl_data, sopr_data, on='DateTime', how='inner')
+
+# Rename the column BTC price_x to BTC Price
+data.rename(columns={'BTC price_x': 'BTC Price'}, inplace=True)
+
+# Check the columns after merging
+print("Columns after merging:", data.columns)
+
+# Parameters
+NUPL_THRESHOLD = 0.70  # Threshold for NUPL peaks
+SOPR_THRESHOLD = 1.10  # Threshold for SOPR peaks
+MAX_DELAY = 30  # Maximum delay in days for the analysis
+
+# Function to identify NUPL and SOPR peaks
+def identify_peaks(data, nupl_threshold, sopr_threshold):
+    peaks = data[(data['NUPL'] > nupl_threshold) & (data['SOPR'] > sopr_threshold)]
+    return peaks
+
+# Identify the peaks
+peaks = identify_peaks(data, NUPL_THRESHOLD, SOPR_THRESHOLD)
+
+# Function to calculate correlations
+def calculate_correlations(data, peaks, max_delay):
+    results = []
+    for delay in range(max_delay + 1):
+        correlations = []
+        p_values = []
+        for index, row in peaks.iterrows():
+            future_data = data[(data['DateTime'] > row['DateTime']) & (data['DateTime'] <= row['DateTime'] + pd.Timedelta(days=delay))]
+            if not future_data.empty:
+                min_price = future_data['BTC Price'].min()  # Lowest price within the delay
+                correlations.append(row['NUPL'])  # NUPL value at the peak
+                p_values.append(min_price)  # Lowest BTC price after the peak
+        if correlations and p_values:
+            r, p = pearsonr(correlations, p_values)  # Calculate Pearson correlation
+            results.append({'Delay': delay, 'Correlation': r, 'P-value': p})
+    return pd.DataFrame(results)  # Return a DataFrame
+
+# Calculate correlations for each delay
+correlation_results = calculate_correlations(data, peaks, MAX_DELAY)
+
+# Display the results
+print(correlation_results)
+
+# Visualize the results
+plt.figure(figsize=(10, 6))
+plt.plot(correlation_results['Delay'], correlation_results['Correlation'], marker='o', label='Correlation')
+plt.axhline(0, color='red', linestyle='--', label='Reference line (r = 0)')
+plt.xlabel('Delay (days)')
+plt.ylabel('Pearson Correlation (r)')
+plt.title('Correlation between NUPL/SOPR peaks and subsequent BTC price drops')
+plt.legend()
+plt.grid()
+plt.show()  # Display the plot
