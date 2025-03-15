@@ -8,7 +8,6 @@ The two files must start on the same date and end on the same date.
 Save the files in CSV format.
 The file names must match those included in the code. 
 
-# Check the columns
 print("Columns in bitcoin-nupl.csv:", nupl_data.columns)
 print("Columns in bitcoin-sopr-spent-outpu.csv:", sopr_data.columns)
 
