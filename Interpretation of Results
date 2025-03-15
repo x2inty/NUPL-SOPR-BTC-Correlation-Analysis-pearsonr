@@ -1,0 +1,30 @@
+<Interpretation of Results>
+
+Strong Negative Correlation:
+The correlations are strongly negative (between -0.630206 and -0.900244), confirming an inverse relationship between NUPL/SOPR peaks and subsequent BTC price drops.
+
+For example, for a 3-day delay, the correlation is -0.884390, meaning that when NUPL/SOPR reaches a peak, the price of BTC tends to drop significantly within the next 3 days.
+
+Statistical Significance:
+For delays of 3 to 30 days, the p-values are less than 0.05, indicating that the correlation is statistically significant.
+
+For example, for a 3-day delay, the p-value is 0.046361, meaning there is less than a 5% chance that this correlation is due to random chance.
+
+For delays of 1 and 2 days, the p-values are still greater than 0.05, suggesting that the correlation is not significant in the short term.
+
+Optimal Delay:
+The strongest correlation is observed for a 3-day delay (Correlation = -0.884390, P-value = 0.046361).
+
+After 3 days, the correlation remains strong and significant but stabilizes around -0.878558 for delays of 20 to 30 days.
+
+3-Day Delay
+Correlation: -0.884390
+P-value: 0.046361
+
+Interpretation: The correlation is strong and statistically significant (p-value < 0.05). This confirms that NUPL/SOPR peaks are strongly correlated with BTC price drops within the next 3 days.
+
+Delays of 4 to 30 Days
+Correlation: Between -0.884390 and -0.878558
+P-value: Between 0.046361 and 0.049867
+
+Interpretation: The correlation remains strong and significant for all these delays. This suggests that the effect of NUPL/SOPR peaks persists for at least 30 days.
